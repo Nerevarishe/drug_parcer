@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <title>Drug Parcer</title>
+    </head>
+    <body>
+        <p><h1>Parser</h1></p>
+        <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.searchfield.label }}<br>
+            {{ form.searchfield(size=32) }}
+        </p>
+        <p>{{ form.searchbutton() }}</p>
+    </form>
+    {% if drug_list %}
+    <ul>
+    {% for element in drug_list %}
+        {% for drug, price in element.items() %}
+        <li>{{ drug }}: {{ price }}</li>
+        {% endfor %}
+    {% endfor %}
+    {% endif%}
+    </ul>
+    
+    </body>
+</html>
