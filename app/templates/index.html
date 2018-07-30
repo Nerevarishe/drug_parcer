@@ -12,16 +12,27 @@
         </p>
         <p>{{ form.searchbutton() }}</p>
     </form>
-    {% if drug_list %}
+    {% if drug_list1 %}
     <h1>apteka.ru</h1>
     <ul>
-    {% for element in drug_list %}
+    {% for element in drug_list1 %}
         {% for drug, price in element.items() %}
         <li>{{ drug }}: {{ price }}</li>
         {% endfor %}
     {% endfor %}
-    {% endif%}
     </ul>
-    
+    {% endif%}
+
+    {% if drug_list2 %}
+    <h1>apteka-sklad.com</h1>
+    <ul>
+    {% for element in drug_list2 %}
+        {% for drug, price in element.items() %}
+        <li>{{ drug }}: {{ price }}</li>
+        {% endfor %}
+    {% endfor %}
+    </ul>
+    {% endif%}
+        
     </body>
 </html>
