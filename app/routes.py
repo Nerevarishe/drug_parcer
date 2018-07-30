@@ -19,5 +19,5 @@ def index():
         price = soup.find_all("div", "price")
         drug = [ element.get_text() for element in drug ]
         price = [ element.get_text() for element in price ]
-        drug_list =  [ dict.fromkeys(drug, price) ]
+        drug_list =[ dict(zip(drug, price)) ]
     return render_template('index.html', form=form, drug_list=drug_list)

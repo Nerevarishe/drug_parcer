@@ -13,6 +13,7 @@
         <p>{{ form.searchbutton() }}</p>
     </form>
     {% if drug_list %}
+    <h1>apteka.ru</h1>
     <ul>
     {% for element in drug_list %}
         {% for drug, price in element.items() %}
