@@ -9,10 +9,14 @@ import bs4
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     form = SearchForm()
-    drug_list1 = None
-    drug_list2 = None
+    
+    DL_apteka_ru = None
+    DL_apteka_sklad_com = None
+    DL_glav_apteka_ru = None
+    
     if form.validate_on_submit():
         search_query = form.searchfield.data
+        
         # apteka.ru
         # Поисковый запрос на сайте apteka.ru
         SL_apteka_ru = 'https://apteka.ru/search/?q=' + search_query
@@ -31,12 +35,12 @@ def index():
         
         # Парсинг... TODO Дописать комментарии
         soup = bs4.BeautifulSoup(response.text, "html.parser")
-        soup = soup.find("div", "list catalog-list")
-        drug = soup.find_all("span", "h2-style")
-        price = soup.find_all("div", "price")
+        soup = soup.find("div", class_="list catalog-list")
+        drug = soup.find_all("span", class_="h2-style")
+        price = soup.find_all("div", class_="price")
         drug = [ element.get_text() for element in drug ]
         price = [ element.get_text() for element in price ]
-        drug_list1 =[ dict(zip(drug, price)) ]
+        DL_apteka_ru =[ dict(zip(drug, price)) ]
         
         
         # apteka-sklad.com
@@ -50,10 +54,31 @@ def index():
         
         soup = bs4.BeautifulSoup(response.text, "html.parser")
         soup = soup.find(id="search-results")
-        drug = soup.find_all("a", "products-list__link")
-        price = soup.find_all("div", "products-list__price")
+        
+        # Убрать цены до акции 
+        test = soup.find_all("div", class_="products-list__price products-list__price--old")
+        for element in test:
+            _ = element.extract()
+        drug = soup.find_all("a", class_="products-list__link")
+        price = soup.find_all("div", class_="products-list__price")
         drug = [ element.get_text() for element in drug ]
         price = [ element.get_text() for element in price ]
-        drug_list2 =[ dict(zip(drug, price)) ]
+        DL_apteka_sklad_com =[ dict(zip(drug, price)) ]
         
-    return render_template('index.html', form=form, drug_list1=drug_list1, drug_list2=drug_list2)
+        # glav-apteka.ru
+        # Поисквая ссылка
+        SL_glav_apteka_ru = 'https://glav-apteka.ru/searchSmart/?query=' + search_query
+        response = session.get(SL_glav_apteka_ru)
+        soup = bs4.BeautifulSoup(response.text, "html.parser")
+        drug = soup.find_all("h5", class_="s-product-header")
+        price = soup.find_all("span", class_="s-price")
+        print(drug)
+        print(price)
+        drug = [ element.get_text() for element in drug ]
+        price = [ element.get_text() for element in price ]
+        print(drug)
+        print(price)
+        DL_glav_apteka_ru =[ dict(zip(drug, price)) ]
+        print(DL_glav_apteka_ru)
+        
+    return render_template('index.html', form=form, DL_apteka_ru=DL_apteka_ru, DL_apteka_sklad_com=DL_apteka_sklad_com, DL_glav_apteka_ru=DL_glav_apteka_ru)
