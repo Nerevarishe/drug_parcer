@@ -14,9 +14,11 @@ def index():
     DL_apteka_sklad_com = None
     DL_glav_apteka_ru = None
     DL_rigla_ru = None
+    DL_krym_budzdorov_ru = None
     
     if form.validate_on_submit():
         search_query = form.searchfield.data
+        
         
         # apteka.ru
         # Поисковый запрос на сайте apteka.ru
@@ -70,6 +72,7 @@ def index():
         price = [ element.get_text() for element in price ]
         DL_apteka_sklad_com =[ dict(zip(drug, price)) ]
         
+        
         # glav-apteka.ru
         # Поисквая ссылка
         SL_glav_apteka_ru = 'https://glav-apteka.ru/searchSmart/?query=' + search_query
@@ -107,4 +110,30 @@ def index():
         DL_rigla_ru =[ dict(zip(drug, price)) ]
         
         
-    return render_template('index.html', form=form, DL_apteka_ru=DL_apteka_ru, DL_apteka_sklad_com=DL_apteka_sklad_com, DL_glav_apteka_ru=DL_glav_apteka_ru, DL_rigla_ru = DL_rigla_ru)
+        # krym.budzdorov.ru
+        # Поисковый запрос на сайте rigla.ru
+        SL_krym_budzdorov_ru = 'https://krym.budzdorov.ru/search/' + search_query + '?product_list_limit=80'
+        
+        # Ссылка для выбора региона на сайте (Выбрать город Симферополь)
+        # region_link = ''
+        
+        # Выбрать регион на сайте
+        # response = session.get(region_link)
+        
+        # Загрузить страницу для парсинга
+        response = session.get(SL_krym_budzdorov_ru)
+        
+        # Парсинг... TODO Дописать комментарии
+        soup = bs4.BeautifulSoup(response.text, "html.parser")
+        soup = soup.find("ol", class_="products list items product-items")
+        drug = soup.find_all("a", class_="product-item-link")
+        price = soup.find_all("span", class_="price")
+        drug = [ element.get_text() for element in drug ]
+        price = [ element.get_text() for element in price ]
+        DL_krym_budzdorov_ru =[ dict(zip(drug, price)) ]
+        
+    return render_template('index.html', form=form, DL_apteka_ru=DL_apteka_ru,
+                            DL_apteka_sklad_com=DL_apteka_sklad_com,
+                            DL_glav_apteka_ru=DL_glav_apteka_ru,
+                            DL_rigla_ru = DL_rigla_ru,
+                            DL_krym_budzdorov_ru=DL_krym_budzdorov_ru)

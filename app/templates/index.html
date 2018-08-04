@@ -55,5 +55,16 @@
     {% endfor %}
     </ul>
     {% endif%}
+    
+    {% if DL_krym_budzdorov_ru %}
+    <h1>krym.budzdorov.ru</h1>
+    <ul>
+    {% for element in DL_krym_budzdorov_ru %}
+        {% for drug, price in element.items() %}
+        <li>{{ drug }}: {{ price }}</li>
+        {% endfor %}
+    {% endfor %}
+    </ul>
+    {% endif%}
     </body>
 </html>
